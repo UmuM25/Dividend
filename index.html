@@ -264,35 +264,17 @@
       background: var(--primary-dark);
       box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
     }
-        .btn-secondary {
 
+    .btn-secondary {
       background: #6c757d;
-
       color: white;
-
       width: 100%;
-
       margin-top: 10px;
-
     }
 
     .btn-secondary:hover {
-
       background: #5c636a;
-
       box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-
-    }
-
-    .btn-orange {
-      background: var(--orange);
-      color: white;
-      width: 100%;
-    }
-
-    .btn-orange:hover {
-      background: var(--orange-dark);
-      box-shadow: 0 4px 12px rgba(253, 126, 20, 0.3);
     }
 
     .btn-print {
@@ -324,52 +306,6 @@
     }
 
     .formula-box strong { color: var(--text); }
-
-    .rebate-result-box {
-      margin-top: 16px;
-      padding: 16px;
-      background: #fff8f0;
-      border-radius: 12px;
-      border: 2px solid var(--orange);
-      display: none;
-    }
-
-    .rebate-result-box.visible {
-      display: block;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .rebate-result-title {
-      font-weight: 700;
-      color: var(--orange-dark);
-      margin-bottom: 12px;
-      text-align: center;
-      font-size: 1rem;
-    }
-
-    .rebate-result-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px dashed #ffd8b2;
-      font-size: 0.9rem;
-    }
-
-    .rebate-result-row:last-child {
-      border-bottom: none;
-    }
-
-    .rebate-result-row.total {
-      margin-top: 8px;
-      padding-top: 12px;
-      border-top: 2px solid var(--orange);
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .rebate-result-row strong {
-      color: var(--orange-dark);
-    }
 
     .result-card {
       display: none;
@@ -447,12 +383,6 @@
     .result-item-title {
       font-weight: 500;
       font-size: 0.95rem;
-    }
-
-    .result-item-value {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--primary);
     }
 
     .badge {
@@ -694,29 +624,6 @@
       font-weight: 700;
     }
 
-    .print-grand-total {
-      text-align: center;
-      border: 2px solid var(--primary);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 24px;
-      background: #f8f9fa;
-    }
-
-    .print-grand-total h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-      color: var(--muted);
-      font-weight: 400;
-    }
-
-    .print-grand-total p {
-      margin: 0;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
     .print-footer {
       margin-top: 40px;
       text-align: center;
@@ -740,46 +647,18 @@
       width: 80%;
     }
 
-    /* Print Styles */
     @media print {
       body {
         background: white;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-
-      .header,
-      .year-card,
-      .calc-card,
-      .formula-box,
-      .print-actions,
-      .footer,
-      .result-card {
+      .header, .year-card, .calc-card, .print-actions, .footer, .result-card {
         display: none !important;
       }
-
-      .container {
-        margin: 0;
-        padding: 0;
-        max-width: 100%;
-      }
-
-      .card {
-        box-shadow: none;
-        border-radius: 0;
-        padding: 0;
-        margin: 0;
-      }
-
-      .print-report {
-        display: block !important;
-        page-break-after: avoid;
-      }
-
-      @page {
-        margin: 15mm;
-        size: A4 portrait;
-      }
+      .container { margin: 0; padding: 0; max-width: 100%; }
+      .print-report { display: block !important; }
+      @page { margin: 15mm; size: A4 portrait; }
     }
   </style>
 </head>
@@ -787,7 +666,7 @@
 
   <header class="header">
     <img src="https://cdn.phototourl.com/member/2026-10-31-c0564be4-cf7f-4644-888b-58bb8d099b93.png" alt="โลโก้สหกรณ์ออมทรัพย์ครูชุมพร จำกัด" class="logo-img">
-    <h1>ระบบคำนวณเงินปันผล & เฉลี่ยคืน</h1>
+    <h1>ระบบคำนวณเงินปันผล</h1>
     <p>สหกรณ์ออมทรัพย์ครูชุมพร จำกัด</p>
   </header>
 
@@ -801,175 +680,114 @@
       <select id="yearSelect" onchange="onYearChange()"></select>
     </div>
 
-    <!-- Calculators -->
+    <!-- Calculators Grid -->
     <div class="grid-calc">
-      <!-- Dividend card -->
+      <!-- 1. คำนวณเงินปันผล -->
       <div class="card calc-card">
         <div class="calc-header">
           <div class="calc-number">1</div>
-          <h2 class="calc-title">คำนวณเงินปันผล</h2>
+          <h2 class="calc-title">คำนวณเงินปันผลประจำปี</h2>
         </div>
 
         <div class="form-group">
           <label for="dividendRate">อัตราปันผล (%)</label>
-          <input type="number" id="dividendRate" step="0.01" placeholder="ตัวอย่าง 5.40">
+          <input type="number" id="dividendRate" step="0.01" placeholder="ตัวอย่าง 4.5" oninput="calculate()">
         </div>
 
         <div class="form-group">
           <label for="shareCarryForward">
             หุ้นยกมา <span class="hint" id="carryYearLabel">(สิ้นสุด 31 ตุลาคม 2568)</span>
           </label>
-          <input type="number" id="shareCarryForward" placeholder="กรอกจำนวนหุ้นยกมา">
+          <input type="number" id="shareCarryForward" placeholder="กรอกจำนวนหุ้นยกมา" oninput="calculate()">
         </div>
 
-        <h3 style="font-size: 1rem; margin: 20px 0 10px; color: var(--text);">หุ้นรายเดือน</h3>
-        <div class="month-grid" id="monthInputs">
-          <!-- Generated by JS -->
-        </div>
+        <h3 style="font-size: 1rem; margin: 20px 0 10px; color: var(--text);">หุ้นสะสมรายเดือน</h3>
+        <div class="month-grid" id="monthInputs"></div>
 
         <button class="btn btn-primary" onclick="calculate()">กดเพื่อคำนวณเงินปันผล</button>
-        <button class="btn btn-secondary" onclick="resetForm('dividend')">คำนวณใหม่</button>
+        <button class="btn btn-secondary" onclick="resetForm()">คำนวณใหม่</button>
       </div>
 
-      <!-- Rebate card -->
+      <!-- 2. วิธีคำนวณเงินเฉลี่ยคืน (แสดงสูตรอย่างเดียว) -->
       <div class="card calc-card orange">
         <div class="calc-header">
           <div class="calc-number">2</div>
-          <h2 class="calc-title">คำนวณเงินเฉลี่ยคืน</h2>
+          <h2 class="calc-title">สูตรคำนวณเงินเฉลี่ยคืน</h2>
         </div>
 
         <div class="form-group">
           <label for="rebateRate">อัตราเฉลี่ยคืน (%)</label>
-          <input type="number" id="rebateRate" step="0.01" placeholder="ตัวอย่าง 9.50">
+          <input type="number" id="rebateRate" step="0.01" placeholder="ตัวอย่าง 12.0" readonly style="background-color: #e9ecef; cursor: not-allowed;">
         </div>
 
-        <div class="form-group">
-          <label for="loanInterest">
-            ดอกเบี้ยเงินกู้สะสมรวมทั้งปี <span class="hint orange" id="interestYearLabel">(สิ้นสุด 31 ตุลาคม 2569)</span>
-          </label>
-          <input type="number" id="loanInterest" placeholder="กรอกยอดดอกเบี้ยจ่ายทั้งหมด">
-        </div>
-
-        <button class="btn btn-orange" onclick="calculate()">กดเพื่อคำนวณค่าเฉลี่ยคืน</button>
-        <button class="btn btn-secondary" onclick="resetForm('rebate')">คำนวณใหม่</button>
-
-        <div class="formula-box">
-          สูตรการคิดคำนวณ<br>
-          <strong>ดอกเบี้ยทั้งหมด × อัตราเฉลี่ยคืน</strong>
-        </div>
-
-        <div id="rebateResultBox" class="rebate-result-box">
-          <div class="rebate-result-title">ผลการคำนวณเงินเฉลี่ยคืน</div>
-          <div class="rebate-result-row">
-            <span>ดอกเบี้ยเงินกู้สะสมรวมทั้งปี</span>
-            <strong id="rebateResultLoanInterest">0.00</strong>
-          </div>
-          <div class="rebate-result-row">
-            <span>อัตราเฉลี่ยคืน</span>
-            <strong id="rebateResultRate">0.00%</strong>
-          </div>
-          <div class="rebate-result-row total">
-            <span>เงินเฉลี่ยคืนรวม</span>
-            <strong id="rebateResultTotal">0.00</strong>
-          </div>
+        <div class="formula-box" style="margin-top: 24px; padding: 20px; background: #fff8f0; border: 1px dashed var(--orange);">
+          <strong style="color: var(--orange-dark); font-size: 1.05rem; display: block; margin-bottom: 8px;">วิธีการคำนวณเงินเฉลี่ยคืน</strong>
+          <p style="margin: 0; color: var(--text); font-size: 0.95ln; line-height: 1.6;">
+            จำนวนดอกเบี้ยที่ชำระสะสมตลอดปี × อัตราเฉลี่ยคืน (%)
+          </p>
+          <span style="display: block; margin-top: 12px; font-size: 0.85rem; color: var(--muted);">
+            *(ส่วนนี้แสดงเพื่อเป็นแนวทางและหลักการคิดคำนวณเงินเฉลี่ยคืน)*
+          </span>
         </div>
       </div>
     </div>
 
     <!-- Results -->
     <div class="card result-card" id="resultCard">
-      <h2>รายละเอียดการคำนวณ</h2>
+      <h2>รายละเอียดการคำนวณเงินปันผล</h2>
 
-      <div id="dividendSection">
-        <h3 style="font-size: 1.1rem; color: var(--primary); margin: 0 0 16px; padding-left: 12px; border-left: 4px solid var(--primary);">เงินปันผล</h3>
+      <!-- สรุปจำนวนหุ้น -->
+      <div class="summary-box">
+        <div class="summary-row">
+          <span>หุ้นยกมา</span>
+          <span class="value" id="shareCarryForwardDisplay">0.00</span>
+        </div>
+        <div class="summary-row">
+          <span>หุ้นเพิ่มในปี</span>
+          <span class="value" id="shareAddedThisYear">0.00</span>
+        </div>
+        <div class="summary-row highlight">
+          <span>หุ้นยกไป</span>
+          <span class="value" id="shareCarryForwardNext">0.00</span>
+        </div>
+      </div>
 
-        <!-- สรุปจำนวนหุ้น -->
-        <div class="summary-box">
-          <div class="summary-row">
+      <!-- Section 1: ปันผลหุ้นยกมา -->
+      <div class="result-item">
+        <div class="result-item-header">
+          <span class="result-item-title">1. จากค่าหุ้นยกมาจากปีก่อน</span>
+          <div class="badge">
             <span>หุ้นยกมา</span>
-            <span class="value" id="shareCarryForwardDisplay">0.00</span>
-          </div>
-          <div class="summary-row">
-            <span>หุ้นเพิ่มในปี</span>
-            <span class="value" id="shareAddedThisYear">0.00</span>
-          </div>
-          <div class="summary-row highlight">
-            <span>หุ้นยกไป</span>
-            <span class="value" id="shareCarryForwardNext">0.00</span>
+            <span>×</span>
+            <span>อัตราปันผล</span>
           </div>
         </div>
-
-        <!-- Section 1: ปันผลหุ้นยกมา -->
-        <div class="result-item">
-          <div class="result-item-header">
-            <span class="result-item-title">1. จากค่าหุ้นยกมาจากปีก่อน</span>
-            <div class="badge">
-              <span>หุ้นยกมา</span>
-              <span>×</span>
-              <span>อัตราปันผล</span>
-            </div>
-          </div>
-          <div style="text-align: right; margin-top: 10px;">
-            <span style="color: var(--muted); font-size: 0.85rem;">รวมปันผลหุ้นยกมา</span>
-            <div class="result-item-value" id="dividendCarryResult">0.00</div>
-          </div>
-        </div>
-
-        <!-- Section 2: ปันผลรายเดือน -->
-        <div class="result-item">
-          <div class="result-item-header">
-            <span class="result-item-title">2. จากอัตราเงินและสะสมรายเดือน <span id="monthRangeLabel" style="color: var(--primary);">...</span></span>
-          </div>
-
-          <table class="month-table">
-            <tbody id="monthTableBody">
-              <!-- Generated by JS -->
-            </tbody>
-            <tfoot>
-              <tr class="total-row">
-                <td colspan="2" style="text-align: right;">รวมปันผลสะสมรายเดือน:</td>
-                <td id="dividendMonthlyTotal">0.00</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <div class="summary-box">
-          <div class="summary-row highlight">
-            <span>เงินปันผลรวม</span>
-            <span class="value" id="dividendTotal">0.00</span>
-          </div>
+        <div style="text-align: right; margin-top: 10px;">
+          <span style="color: var(--muted); font-size: 0.85rem;">รวมปันผลหุ้นยกมา</span>
+          <div class="result-item-value" id="dividendCarryResult" style="font-size: 1.4rem; font-weight: 700; color: var(--primary);">0.00</div>
         </div>
       </div>
 
-      <div id="rebateSection" style="margin-top: 24px;">
-        <h3 style="font-size: 1.1rem; color: var(--orange-dark); margin: 0 0 16px; padding-left: 12px; border-left: 4px solid var(--orange);">เงินเฉลี่ยคืน</h3>
-
-        <div class="summary-box">
-          <div class="summary-row">
-            <span>ดอกเบี้ยเงินกู้สะสมรวมทั้งปี</span>
-            <span class="value" id="loanInterestDisplay">0.00</span>
-          </div>
-          <div class="summary-row">
-            <span>อัตราเฉลี่ยคืน</span>
-            <span class="value" id="rebateRateDisplay">0.00%</span>
-          </div>
-          <div class="summary-row highlight">
-            <span>เงินเฉลี่ยคืนรวม</span>
-            <span class="value" id="rebateTotalDisplay">0.00</span>
-          </div>
+      <!-- Section 2: ปันผลรายเดือน -->
+      <div class="result-item">
+        <div class="result-item-header">
+          <span class="result-item-title">2. จากอัตราเงินและสะสมรายเดือน <span id="monthRangeLabel" style="color: var(--primary);">...</span></span>
         </div>
+
+        <table class="month-table">
+          <tbody id="monthTableBody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="2" style="text-align: right;">รวมปันผลสะสมรายเดือน:</td>
+              <td id="dividendMonthlyTotal">0.00</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
 
-      <div id="grandTotalSection" style="margin-top: 24px;">
-        <div class="formula-box">
-          สูตรคิด: <strong>(ปันผลหุ้นยกมา + ปันผลรายเดือน) + เงินเฉลี่ยคืน = รวมทั้งสิ้น</strong>
-        </div>
-
-        <div class="grand-total">
-          <h3>รวมเงินปันผล & เฉลี่ยคืนทั้งสิ้น</h3>
-          <p id="grandTotal">0.00</p>
-        </div>
+      <div class="grand-total">
+        <h3>รวมเงินปันผลทั้งสิ้น</h3>
+        <p id="grandTotal">0.00</p>
       </div>
 
       <div class="print-actions">
@@ -979,12 +797,12 @@
       </div>
     </div>
 
-    <!-- Print Report (Hidden on screen, shown when printing) -->
+    <!-- Print Report -->
     <div class="card print-report" id="printReport">
       <div class="print-header">
-        <img src="https://cdn.phototourl.com/member/2026-10-31-c0564be4-cf7f-4644-888b-58bb8d099b93.png" alt="โลโก้สหกรณ์ออมทรัพย์ครูชุมพร จำกัด" class="print-logo-img">
+        <img src="https://cdn.phototourl.com/member/2026-10-31-c0564be4-cf7f-4644-888b-58bb8d099b93.png" alt="โลโก้สหกรณ์" class="print-logo-img">
         <div class="print-header-content">
-          <h1>รายงานการคำนวณเงินปันผลและเงินเฉลี่ยคืน</h1>
+          <h1>รายงานการคำนวณเงินปันผล</h1>
           <h2 id="printReportTitle">ปีบัญชี พ.ศ. 2569</h2>
           <p style="margin: 6px 0 0; color: var(--muted); font-size: 0.95rem;">สหกรณ์ออมทรัพย์ครูชุมพร จำกัด</p>
         </div>
@@ -999,99 +817,66 @@
           <strong>วันที่พิมพ์:</strong>
           <span id="printDate">-</span>
         </div>
-        <div class="print-info-item">
+        <div class="print-info-item" style="grid-column: span 2;">
           <strong>อัตราปันผล:</strong>
-          <span id="printDividendRate">5.40%</span>
-        </div>
-        <div class="print-info-item">
-          <strong>อัตราเฉลี่ยคืน:</strong>
-          <span id="printRebateRate">9.50%</span>
+          <span id="printDividendRate">4.50%</span>
         </div>
       </div>
 
-      <div id="printDividendSection">
-        <div class="print-section-title">สรุปจำนวนหุ้น</div>
-        <table class="print-summary-table">
-          <tbody>
-            <tr>
-              <td>หุ้นยกมา</td>
-              <td id="printShareCarryForward">0.00</td>
-            </tr>
-            <tr>
-              <td>หุ้นเพิ่มในปี</td>
-              <td id="printShareAddedThisYear">0.00</td>
-            </tr>
-            <tr class="highlight">
-              <td>หุ้นยกไป</td>
-              <td id="printShareCarryForwardNext">0.00</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="print-section-title">สรุปจำนวนหุ้น</div>
+      <table class="print-summary-table">
+        <tbody>
+          <tr>
+            <td>หุ้นยกมา</td>
+            <td id="printShareCarryForward">0.00</td>
+          </tr>
+          <tr>
+            <td>หุ้นเพิ่มในปี</td>
+            <td id="printShareAddedThisYear">0.00</td>
+          </tr>
+          <tr class="highlight">
+            <td>หุ้นยกไป</td>
+            <td id="printShareCarryForwardNext">0.00</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <div class="print-section-title">สรุปการคำนวณเงินปันผล</div>
-        <table class="print-summary-table">
-          <tbody>
-            <tr>
-              <td>ปันผลจากหุ้นยกมา</td>
-              <td id="printDividendCarry">0.00</td>
-            </tr>
-            <tr>
-              <td>ปันผลจากหุ้นรายเดือน</td>
-              <td id="printDividendMonthly">0.00</td>
-            </tr>
-            <tr class="highlight">
-              <td>เงินปันผลรวม</td>
-              <td id="printDividendTotal">0.00</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="print-section-title">สรุปการคำนวณเงินปันผล</div>
+      <table class="print-summary-table">
+        <tbody>
+          <tr>
+            <td>ปันผลจากหุ้นยกมา</td>
+            <td id="printDividendCarry">0.00</td>
+          </tr>
+          <tr>
+            <td>ปันผลจากหุ้นรายเดือน</td>
+            <td id="printDividendMonthly">0.00</td>
+          </tr>
+          <tr class="highlight">
+            <td>เงินปันผลรวมทั้งสิ้น</td>
+            <td id="printDividendTotal">0.00</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <div class="print-section-title">รายละเอียดหุ้นรายเดือน</div>
-        <table class="print-month-table">
-          <thead>
-            <tr>
-              <th>เดือน</th>
-              <th>ช่วงวันที่</th>
-              <th>สูตรคำนวณ</th>
-              <th>ปันผล</th>
-            </tr>
-          </thead>
-          <tbody id="printMonthTableBody">
-            <!-- Generated by JS -->
-          </tbody>
-          <tfoot>
-            <tr class="total-row">
-              <td colspan="3" style="text-align: right;">รวมปันผลสะสมรายเดือน:</td>
-              <td id="printDividendMonthlyTotal">0.00</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <div id="printRebateSection">
-        <div class="print-section-title">สรุปการคำนวณเงินเฉลี่ยคืน</div>
-        <table class="print-summary-table">
-          <tbody>
-            <tr>
-              <td>ดอกเบี้ยเงินกู้สะสมรวมทั้งปี</td>
-              <td id="printLoanInterest">0.00</td>
-            </tr>
-            <tr>
-              <td>อัตราเฉลี่ยคืน</td>
-              <td id="printRebateRateDisplay">0.00%</td>
-            </tr>
-            <tr class="highlight">
-              <td>เงินเฉลี่ยคืนรวม</td>
-              <td id="printRebateTotal">0.00</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="print-grand-total">
-        <h3>รวมเงินปันผลและเงินเฉลี่ยคืนทั้งสิ้น</h3>
-        <p id="printGrandTotal">0.00</p>
-      </div>
+      <div class="print-section-title">รายละเอียดหุ้นรายเดือน</div>
+      <table class="print-month-table">
+        <thead>
+          <tr>
+            <th>เดือน</th>
+            <th>ช่วงวันที่</th>
+            <th>สูตรคำนวณ</th>
+            <th>ปันผล</th>
+          </tr>
+        </thead>
+        <tbody id="printMonthTableBody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3" style="text-align: right;">รวมปันผลสะสมรายเดือน:</td>
+            <td id="printDividendMonthlyTotal">0.00</td>
+          </tr>
+        </tfoot>
+      </table>
 
       <div class="print-signature">
         <div>
@@ -1166,7 +951,6 @@
     function renderMonthInputs() {
       const container = document.getElementById("monthInputs");
       container.innerHTML = "";
-
       monthData.forEach((m, index) => {
         const div = document.createElement("div");
         div.className = "month-input form-group";
@@ -1176,7 +960,7 @@
             <span class="range">${m.range}</span>
             <span class="factor">× ${m.factor} / 12</span>
           </label>
-          <input type="number" id="share-month-${index}" placeholder="0">
+          <input type="number" id="share-month-${index}" placeholder="0" oninput="calculate()">
         `;
         container.appendChild(div);
       });
@@ -1185,7 +969,6 @@
     function renderPrintMonthTable() {
       const tbody = document.getElementById("printMonthTableBody");
       tbody.innerHTML = "";
-
       monthData.forEach((m, index) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -1205,22 +988,16 @@
 
       document.getElementById("dividendRate").value = data.dividend.toFixed(2);
       document.getElementById("rebateRate").value = data.rebate.toFixed(2);
-
       document.getElementById("carryYearLabel").textContent = `(สิ้นสุด 31 ตุลาคม ${prevYear})`;
-      document.getElementById("interestYearLabel").textContent = `(สิ้นสุด 31 ตุลาคม ${prevYear})`;
       document.getElementById("monthRangeLabel").textContent = `(พ.ย. ${prevYear} - ต.ค. ${year})`;
 
       renderMonthTable(prevYear, year);
-
-      if (hasCalculated) {
-        calculate();
-      }
+      calculate();
     }
 
     function renderMonthTable(prevYear, year) {
       const tbody = document.getElementById("monthTableBody");
       tbody.innerHTML = "";
-
       monthData.forEach((m, index) => {
         const displayYear = index < 2 ? prevYear : year;
         const tr = document.createElement("tr");
@@ -1235,16 +1012,10 @@
 
     function calculate() {
       hasCalculated = true;
-
       const year = parseInt(document.getElementById("yearSelect").value);
-      const prevYear = year - 1;
       const dividendRate = parseFloat(document.getElementById("dividendRate").value) || 0;
-      const rebateRate = parseFloat(document.getElementById("rebateRate").value) || 0;
-
       const shareCarryForward = parseFloat(document.getElementById("shareCarryForward").value) || 0;
-      const loanInterest = parseFloat(document.getElementById("loanInterest").value) || 0;
 
-      let hasShareData = shareCarryForward > 0;
       let shareAddedThisYear = 0;
       const monthlyShares = [];
 
@@ -1252,129 +1023,65 @@
         const amount = parseFloat(document.getElementById(`share-month-${index}`).value) || 0;
         monthlyShares.push(amount);
         shareAddedThisYear += amount;
-        if (amount > 0) hasShareData = true;
       });
 
       const shareCarryForwardNext = shareCarryForward + shareAddedThisYear;
-      const hasRebateData = loanInterest > 0;
+      document.getElementById("resultCard").classList.add("visible");
 
-      const resultCard = document.getElementById("resultCard");
-      resultCard.classList.add("visible");
-
-      document.getElementById("dividendSection").style.display = hasShareData ? "block" : "none";
-      document.getElementById("rebateSection").style.display = hasRebateData ? "block" : "none";
-      document.getElementById("grandTotalSection").style.display = (hasShareData || hasRebateData) ? "block" : "none";
-
-      document.getElementById("printDividendSection").style.display = hasShareData ? "block" : "none";
-      document.getElementById("printRebateSection").style.display = hasRebateData ? "block" : "none";
-
-      let dividendTotal = 0;
-      let dividendCarry = 0;
+      const dividendCarry = shareCarryForward * (dividendRate / 100);
       let dividendMonthlyTotal = 0;
 
-      if (hasShareData) {
-        dividendCarry = shareCarryForward * (dividendRate / 100);
+      monthData.forEach((m, index) => {
+        const amount = monthlyShares[index];
+        const monthDividend = amount * (m.factor / 12) * (dividendRate / 100);
+        dividendMonthlyTotal += monthDividend;
 
-        monthData.forEach((m, index) => {
-          const amount = monthlyShares[index];
-          const monthDividend = amount * (m.factor / 12) * (dividendRate / 100);
-          dividendMonthlyTotal += monthDividend;
+        document.getElementById(`month-dividend-${index}`).textContent = formatMoney(monthDividend);
+        document.getElementById(`print-month-dividend-${index}`).textContent = formatMoney(monthDividend);
+      });
 
-          document.getElementById(`month-dividend-${index}`).textContent = formatMoney(monthDividend);
-          document.getElementById(`print-month-dividend-${index}`).textContent = formatMoney(monthDividend);
-        });
+      const dividendTotal = dividendCarry + dividendMonthlyTotal;
 
-        dividendTotal = dividendCarry + dividendMonthlyTotal;
+      document.getElementById("shareCarryForwardDisplay").textContent = formatMoney(shareCarryForward);
+      document.getElementById("shareAddedThisYear").textContent = formatMoney(shareAddedThisYear);
+      document.getElementById("shareCarryForwardNext").textContent = formatMoney(shareCarryForwardNext);
 
-        document.getElementById("shareCarryForwardDisplay").textContent = formatMoney(shareCarryForward);
-        document.getElementById("shareAddedThisYear").textContent = formatMoney(shareAddedThisYear);
-        document.getElementById("shareCarryForwardNext").textContent = formatMoney(shareCarryForwardNext);
+      document.getElementById("dividendCarryResult").textContent = formatMoney(dividendCarry);
+      document.getElementById("dividendMonthlyTotal").textContent = formatMoney(dividendMonthlyTotal);
+      document.getElementById("grandTotal").textContent = formatMoney(dividendTotal);
 
-        document.getElementById("dividendCarryResult").textContent = formatMoney(dividendCarry);
-        document.getElementById("dividendMonthlyTotal").textContent = formatMoney(dividendMonthlyTotal);
-        document.getElementById("dividendTotal").textContent = formatMoney(dividendTotal);
-
-        document.getElementById("printShareCarryForward").textContent = formatMoney(shareCarryForward);
-        document.getElementById("printShareAddedThisYear").textContent = formatMoney(shareAddedThisYear);
-        document.getElementById("printShareCarryForwardNext").textContent = formatMoney(shareCarryForwardNext);
-        document.getElementById("printDividendCarry").textContent = formatMoney(dividendCarry);
-        document.getElementById("printDividendMonthly").textContent = formatMoney(dividendMonthlyTotal);
-        document.getElementById("printDividendTotal").textContent = formatMoney(dividendTotal);
-        document.getElementById("printDividendMonthlyTotal").textContent = formatMoney(dividendMonthlyTotal);
-      }
-
-      let rebateTotal = 0;
-
-      if (hasRebateData) {
-        rebateTotal = loanInterest * (rebateRate / 100);
-
-        document.getElementById("loanInterestDisplay").textContent = formatMoney(loanInterest);
-        document.getElementById("rebateRateDisplay").textContent = `${rebateRate.toFixed(2)}%`;
-        document.getElementById("rebateTotalDisplay").textContent = formatMoney(rebateTotal);
-
-        document.getElementById("rebateResultBox").classList.add("visible");
-        document.getElementById("rebateResultLoanInterest").textContent = formatMoney(loanInterest);
-        document.getElementById("rebateResultRate").textContent = `${rebateRate.toFixed(2)}%`;
-        document.getElementById("rebateResultTotal").textContent = formatMoney(rebateTotal);
-
-        document.getElementById("printLoanInterest").textContent = formatMoney(loanInterest);
-        document.getElementById("printRebateRateDisplay").textContent = `${rebateRate.toFixed(2)}%`;
-        document.getElementById("printRebateTotal").textContent = formatMoney(rebateTotal);
-      } else {
-        document.getElementById("rebateResultBox").classList.remove("visible");
-      }
-
-      const grandTotal = dividendTotal + rebateTotal;
-
-      document.getElementById("grandTotal").textContent = formatMoney(grandTotal);
-      document.getElementById("printGrandTotal").textContent = formatMoney(grandTotal);
+      document.getElementById("printShareCarryForward").textContent = formatMoney(shareCarryForward);
+      document.getElementById("printShareAddedThisYear").textContent = formatMoney(shareAddedThisYear);
+      document.getElementById("printShareCarryForwardNext").textContent = formatMoney(shareCarryForwardNext);
+      document.getElementById("printDividendCarry").textContent = formatMoney(dividendCarry);
+      document.getElementById("printDividendMonthly").textContent = formatMoney(dividendMonthlyTotal);
+      document.getElementById("printDividendTotal").textContent = formatMoney(dividendTotal);
+      document.getElementById("printDividendMonthlyTotal").textContent = formatMoney(dividendMonthlyTotal);
 
       document.getElementById("printYear").textContent = `พ.ศ. ${year}`;
       document.getElementById("printReportTitle").textContent = `ปีบัญชี พ.ศ. ${year}`;
       document.getElementById("printDividendRate").textContent = `${dividendRate.toFixed(2)}%`;
-      document.getElementById("printRebateRate").textContent = `${rebateRate.toFixed(2)}%`;
       document.getElementById("printDate").textContent = formatDateThai(new Date());
+    }
+
+    function resetForm() {
+      document.getElementById('shareCarryForward').value = '';
+      monthData.forEach((m, index) => {
+        document.getElementById(`share-month-${index}`).value = '';
+      });
+      hasCalculated = false;
+      document.getElementById("resultCard").classList.remove("visible");
     }
 
     function printReport() {
       if (!hasCalculated) {
-        alert("กรุณากดปุ่มคำนวณก่อนพิมพ์รายงาน");
+        alert("กรุณากรอกข้อมูลเพื่อคำนวณก่อนพิมพ์รายงาน");
         return;
       }
       window.print();
     }
-        function resetForm(type) {
-      if (type === 'dividend') {
-        document.getElementById('shareCarryForward').value = '';
-        monthData.forEach((m, index) => {
-          document.getElementById(`share-month-${index}`).value = '';
-        });
-      } else if (type === 'rebate') {
-        document.getElementById('loanInterest').value = '';
-      }
-
-      // ตรวจสอบว่าถ้าไม่มีข้อมูลฝั่งไหนถูกกรอกเลย ให้ซ่อนผลลัพธ์ทั้งหมด
-      const shareCarry = parseFloat(document.getElementById('shareCarryForward').value) || 0;
-      const loanInt = parseFloat(document.getElementById('loanInterest').value) || 0;
-      let hasAnyShare = shareCarry > 0;
-      monthData.forEach((m, index) => {
-        if (parseFloat(document.getElementById(`share-month-${index}`).value) || 0 > 0) hasAnyShare = true;
-      });
-
-      if (!hasAnyShare && !hasAnyShare) {
-        hasCalculated = false;
-        document.getElementById("resultCard").classList.remove("visible");
-      } else {
-        calculate();
-      }
-
-      if (loanInt <= 0) {
-        document.getElementById("rebateResultBox").classList.remove("visible");
-      }
-    }
 
     init();
   </script>
-
 </body>
 </html>
