@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบคำนวณเงินปันผล & เฉลี่ยคืน - สหกรณ์ออมทรัพย์ครูชุมพร จำกัด</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --primary-dark: #0a58ca;
+      --orange: #fd7e14;
+      --orange-dark: #e76b00;
+      --success: #198754;
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --text: #212529;
+      --muted: #6c757d;
+      --border: #dee2e6;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 20px 70px;
+      border-radius: 0 0 50% 50% / 0 0 30px 30px;
+    }
+
+    .logo-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      margin-bottom: 16px;
+      background: white;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      font-size: 1.1rem;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: -40px auto 40px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .year-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .year-card .title-group h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .year-card .title-group p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .year-card select {
+      min-width: 260px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: white;
+      cursor: pointer;
+    }
+
+    .year-card select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .grid-calc {
+      display: grid;
+      grid-template-columns: 1.85fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .grid-calc { grid-template-columns: 1fr; }
+      .header h1 { font-size: 1.7rem; }
+      .logo-img { width: 70px; height: 70px; }
+    }
+
+    .calc-card {
+      border-top: 5px solid var(--primary);
+      position: relative;
+    }
+
+    .calc-card.orange { border-top-color: var(--orange); }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .calc-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .calc-card.orange .calc-number { background: var(--orange); }
+
+    .calc-title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .calc-card.orange .calc-title { color: var(--orange-dark); }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .form-group label .hint {
+      color: var(--primary);
+      font-weight: 400;
+      font-size: 0.85rem;
+    }
+
+    .form-group label .hint.orange { color: var(--orange-dark); }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .calc-card.orange .form-group input:focus { border-color: var(--orange); }
+
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .month-grid { grid-template-columns: 1fr; }
+    }
+
+    .month-input {
+      min-width: 0;
+    }
+
+    .month-input label {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .month-input .range {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 400;
+      flex-shrink: 0;
+    }
+
+    .month-input .factor {
+      display: inline-block;
+      background: #e3f2fd;
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    }
+        .btn-secondary {
+
+      background: #6c757d;
+
+      color: white;
+
+      width: 100%;
+
+      margin-top: 10px;
+
+    }
+
+    .btn-secondary:hover {
+
+      background: #5c636a;
+
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+
+    }
+
+    .btn-orange {
+      background: var(--orange);
+      color: white;
+      width: 100%;
+    }
+
+    .btn-orange:hover {
+      background: var(--orange-dark);
+      box-shadow: 0 4px 12px rgba(253, 126, 20, 0.3);
+    }
+
+    .btn-print {
+      background: var(--success);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .btn-print:hover {
+      background: #146c43;
+      box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+    }
+
+    .print-actions {
+      text-align: center;
+    }
+
+    .formula-box {
+      margin-top: 16px;
+      padding: 14px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .formula-box strong { color: var(--text); }
+
+    .rebate-result-box {
+      margin-top: 16px;
+      padding: 16px;
+      background: #fff8f0;
+      border-radius: 12px;
+      border: 2px solid var(--orange);
+      display: none;
+    }
+
+    .rebate-result-box.visible {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .rebate-result-title {
+      font-weight: 700;
+      color: var(--orange-dark);
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .rebate-result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed #ffd8b2;
+      font-size: 0.9rem;
+    }
+
+    .rebate-result-row:last-child {
+      border-bottom: none;
+    }
+
+    .rebate-result-row.total {
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 2px solid var(--orange);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .rebate-result-row strong {
+      color: var(--orange-dark);
+    }
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card.visible {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card h2 {
+      margin: 0 0 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .summary-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border);
+      font-size: 0.95rem;
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row .value {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .summary-row.highlight {
+      background: #e3f2fd;
+      margin: 0 -20px;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .summary-row.highlight .value {
+      font-size: 1.2rem;
+    }
+
+    .result-item {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .result-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .result-item-title {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .result-item-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: #e3f2fd;
+      color: var(--primary);
+    }
+
+    .month-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .month-table th,
+    .month-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .month-table th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .month-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+      width: 35%;
+    }
+
+    .month-table td:nth-child(2) {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .month-table td:last-child {
+      text-align: right;
+      font-weight: 600;
+      color: var(--primary);
+      width: 30%;
+    }
+
+    .month-table tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .total-row {
+      background: #e3f2fd !important;
+      font-weight: 700;
+    }
+
+    .total-row td {
+      border-bottom: none;
+    }
+
+    .grand-total {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .grand-total h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .grand-total p {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 20px;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Print Report Section */
+    .print-report {
+      display: none;
+      background: white;
+      padding: 40px;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .print-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px double var(--primary);
+    }
+
+    .print-logo-img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      background: white;
+      flex-shrink: 0;
+    }
+
+    .print-header-content {
+      flex: 1;
+      text-align: center;
+    }
+
+    .print-header-content h1 {
+      margin: 0 0 8px;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .print-header-content h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .print-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .print-info-item {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .print-info-item strong {
+      display: inline-block;
+      width: 140px;
+      color: var(--muted);
+    }
+
+    .print-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 24px 0 12px;
+      color: var(--primary);
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+    }
+
+    .print-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+    }
+
+    .print-summary-table td {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+    }
+
+    .print-summary-table td:first-child {
+      width: 60%;
+      background: #f8f9fa;
+      font-weight: 500;
+    }
+
+    .print-summary-table td:last-child {
+      text-align: right;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .print-summary-table .highlight td {
+      background: #e3f2fd;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .print-month-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    .print-month-table th,
+    .print-month-table td {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .print-month-table th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .print-month-table td:first-child {
+      text-align: left;
+    }
+
+    .print-month-table td:nth-child(2) {
+      text-align: left;
+      color: var(--muted);
+    }
+
+    .print-month-table td:nth-child(3),
+    .print-month-table td:last-child {
+      text-align: right;
+    }
+
+    .print-month-table .total-row td {
+      background: #e3f2fd;
+      font-weight: 700;
+    }
+
+    .print-grand-total {
+      text-align: center;
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+      background: #f8f9fa;
+    }
+
+    .print-grand-total h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .print-grand-total p {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .print-footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    .print-signature {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      text-align: center;
+    }
+
+    .print-signature-line {
+      border-top: 1px solid var(--text);
+      margin: 60px auto 8px;
+      width: 80%;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: white;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .header,
+      .year-card,
+      .calc-card,
+      .formula-box,
+      .print-actions,
+      .footer,
+      .result-card {
+        display: none !important;
+      }
+
+      .container {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .card {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+      }
+
+      .print-report {
+        display: block !important;
+        page-break-after: avoid;
+      }
+
+      @page {
+        margin: 15mm;
+        size: A4 portrait;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <img src="https://cdn.phototourl.com/member/2026-10-31-c0564be4-cf7f-4644-888b-58bb8d099b93.png" alt="โลโก้สหกรณ์ออมทรัพย์ครูชุมพร จำกัด" class="logo-img">
+    <h1>ระบบคำนวณเงินปันผล & เฉลี่ยคืน</h1>
+    <p>สหกรณ์ออมทรัพย์ครูชุมพร จำกัด</p>
+  </header>
+
+  <div class="container">
+    <!-- Year selector -->
+    <div class="card year-card">
+      <div class="title-group">
+        <h2>เลือกปีบัญชี พ.ศ. ที่ต้องการตรวจสอบ</h2>
+        <p>ระบบจะปรับเปลี่ยนเงื่อนไขรอบเดือนและ พ.ศ. ให้โดยอัตโนมัติ</p>
+      </div>
+      <select id="yearSelect" onchange="onYearChange()"></select>
+    </div>
+
+    <!-- Calculators -->
+    <div class="grid-calc">
+      <!-- Dividend card -->
+      <div class="card calc-card">
+        <div class="calc-header">
+          <div class="calc-number">1</div>
+          <h2 class="calc-title">คำนวณเงินปันผล</h2>
+        </div>
+
+        <div class="form-group">
+          <label for="dividendRate">อัตราปันผล (%)</label>
+          <input type="number" id="dividendRate" step="0.01" placeholder="ตัวอย่าง 5.40">
+        </div>
+
+        <div class="form-group">
+          <label for="shareCarryForward">
+            หุ้นยกมา <span class="hint" id="carryYearLabel">(สิ้นสุด 31 ตุลาคม 2568)</span>
+          </label>
+          <input type="number" id="shareCarryForward" placeholder="กรอกจำนวนหุ้นยกมา">
+        </div>
+
+        <h3 style="font-size: 1rem; margin: 20px 0 10px; color: var(--text);">หุ้นรายเดือน</h3>
+        <div class="month-grid" id="monthInputs">
+          <!-- Generated by JS -->
+        </div>
+
+        <button class="btn btn-primary" onclick="calculate()">กดเพื่อคำนวณเงินปันผล</button>
+        <button class="btn btn-secondary" onclick="resetForm('dividend')">คำนวณใหม่</button>
+      </div>
+
+      <!-- Rebate card -->
+      <div class="card calc-card orange">
+        <div class="calc-header">
+          <div class="calc-number">2</div>
+          <h2 class="calc-title">คำนวณเงินเฉลี่ยคืน</h2>
+        </div>
+
+        <div class="form-group">
+          <label for="rebateRate">อัตราเฉลี่ยคืน (%)</label>
+          <input type="number" id="rebateRate" step="0.01" placeholder="ตัวอย่าง 9.50">
+        </div>
+
+        <div class="form-group">
+          <label for="loanInterest">
+            ดอกเบี้ยเงินกู้สะสมรวมทั้งปี <span class="hint orange" id="interestYearLabel">(สิ้นสุด 31 ตุลาคม 2568)</span>
+          </label>
+          <input type="number" id="loanInterest" placeholder="กรอกยอดดอกเบี้ยจ่ายทั้งหมด">
+        </div>
+
+        <button class="btn btn-orange" onclick="calculate()">กดเพื่อคำนวณค่าเฉลี่ยคืน</button>
+        <button class="btn btn-secondary" onclick="resetForm('rebate')">คำนวณใหม่</button>
+
+        <div class="formula-box">
+          สูตรการคิดคำนวณ<br>
+          <strong>ดอกเบี้ยทั้งหมด × อัตราเฉลี่ยคืน</strong>
+        </div>
+
+        <div id="rebateResultBox" class="rebate-result-box">
+          <div class="rebate-result-title">ผลการคำนวณเงินเฉลี่ยคืน</div>
+          <div class="rebate-result-row">
+            <span>ดอกเบี้ยเงินกู้สะสมรวมทั้งปี</span>
+            <strong id="rebateResultLoanInterest">0.00</strong>
+          </div>
+          <div class="rebate-result-row">
+            <span>อัตราเฉลี่ยคืน</span>
+            <strong id="rebateResultRate">0.00%</strong>
+          </div>
+          <div class="rebate-result-row total">
+            <span>เงินเฉลี่ยคืนรวม</span>
+            <strong id="rebateResultTotal">0.00</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card result-card" id="resultCard">
+      <h2>รายละเอียดการคำนวณ</h2>
+
+      <div id="dividendSection">
+        <h3 style="font-size: 1.1rem; color: var(--primary); margin: 0 0 16px; padding-left: 12px; border-left: 4px solid var(--primary);">เงินปันผล</h3>
+
+        <!-- สรุปจำนวนหุ้น -->
+        <div class="summary-box">
+          <div class="summary-row">
+            <span>หุ้นยกมา</span>
+            <span class="value" id="shareCarryForwardDisplay">0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>หุ้นเพิ่มในปี</span>
+            <span class="value" id="shareAddedThisYear">0.00</span>
+          </div>
+          <div class="summary-row highlight">
+            <span>หุ้นยกไป</span>
+            <span class="value" id="shareCarryForwardNext">0.00</span>
+          </div>
+        </div>
+
+        <!-- Section 1: ปันผลหุ้นยกมา -->
+        <div class="result-item">
+          <div class="result-item-header">
+            <span class="result-item-title">1. จากค่าหุ้นยกมาจากปีก่อน</span>
+            <div class="badge">
+              <span>หุ้นยกมา</span>
+              <span>×</span>
+              <span>อัตราปันผล</span>
+            </div>
+          </div>
+          <div style="text-align: right; margin-top: 10px;">
+            <span style="color: var(--muted); font-size: 0.85rem;">รวมปันผลหุ้นยกมา</span>
+            <div class="result-item-value" id="dividendCarryResult">0.00</div>
+          </div>
+        </div>
+
+        <!-- Section 2: ปันผลรายเดือน -->
+        <div class="result-item">
+          <div class="result-item-header">
+            <span class="result-item-title">2. จากอัตราเงินและสะสมรายเดือน <span id="monthRangeLabel" style="color: var(--primary);">...</span></span>
+          </div>
+
+          <table class="month-table">
+            <tbody id="monthTableBody">
+              <!-- Generated by JS -->
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="2" style="text-align: right;">รวมปันผลสะสมรายเดือน:</td>
+                <td id="dividendMonthlyTotal">0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="summary-box">
+          <div class="summary-row highlight">
+            <span>เงินปันผลรวม</span>
+            <span class="value" id="dividendTotal">0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="rebateSection" style="margin-top: 24px;">
+        <h3 style="font-size: 1.1rem; color: var(--orange-dark); margin: 0 0 16px; padding-left: 12px; border-left: 4px solid var(--orange);">เงินเฉลี่ยคืน</h3>
+
+        <div class="summary-box">
+          <div class="summary-row">
+            <span>ดอกเบี้ยเงินกู้สะสมรวมทั้งปี</span>
+            <span class="value" id="loanInterestDisplay">0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>อัตราเฉลี่ยคืน</span>
+            <span class="value" id="rebateRateDisplay">0.00%</span>
+          </div>
+          <div class="summary-row highlight">
+            <span>เงินเฉลี่ยคืนรวม</span>
+            <span class="value" id="rebateTotalDisplay">0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="grandTotalSection" style="margin-top: 24px;">
+        <div class="formula-box">
+          สูตรคิด: <strong>(ปันผลหุ้นยกมา + ปันผลรายเดือน) + เงินเฉลี่ยคืน = รวมทั้งสิ้น</strong>
+        </div>
+
+        <div class="grand-total">
+          <h3>รวมเงินปันผล & เฉลี่ยคืนทั้งสิ้น</h3>
+          <p id="grandTotal">0.00</p>
+        </div>
+      </div>
+
+      <div class="print-actions">
+        <button class="btn btn-print" onclick="printReport()">
+          <span>พิมพ์รายงาน</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Print Report (Hidden on screen, shown when printing) -->
+    <div class="card print-report" id="printReport">
+      <div class="print-header">
+        <img src="https://cdn.phototourl.com/member/2026-10-31-c0564be4-cf7f-4644-888b-58bb8d099b93.png" alt="โลโก้สหกรณ์ออมทรัพย์ครูชุมพร จำกัด" class="print-logo-img">
+        <div class="print-header-content">
+          <h1>รายงานการคำนวณเงินปันผลและเงินเฉลี่ยคืน</h1>
+          <h2 id="printReportTitle">ปีบัญชี พ.ศ. 2569</h2>
+          <p style="margin: 6px 0 0; color: var(--muted); font-size: 0.95rem;">สหกรณ์ออมทรัพย์ครูชุมพร จำกัด</p>
+        </div>
+      </div>
+
+      <div class="print-info">
+        <div class="print-info-item">
+          <strong>ปีบัญชี:</strong>
+          <span id="printYear">2569</span>
+        </div>
+        <div class="print-info-item">
+          <strong>วันที่พิมพ์:</strong>
+          <span id="printDate">-</span>
+        </div>
+        <div class="print-info-item">
+          <strong>อัตราปันผล:</strong>
+          <span id="printDividendRate">5.40%</span>
+        </div>
+        <div class="print-info-item">
+          <strong>อัตราเฉลี่ยคืน:</strong>
+          <span id="printRebateRate">9.50%</span>
+        </div>
+      </div>
+
+      <div id="printDividendSection">
+        <div class="print-section-title">สรุปจำนวนหุ้น</div>
+        <table class="print-summary-table">
+          <tbody>
+            <tr>
+              <td>หุ้นยกมา</td>
+              <td id="printShareCarryForward">0.00</td>
+            </tr>
+            <tr>
+              <td>หุ้นเพิ่มในปี</td>
+              <td id="printShareAddedThisYear">0.00</td>
+            </tr>
+            <tr class="highlight">
+              <td>หุ้นยกไป</td>
+              <td id="printShareCarryForwardNext">0.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="print-section-title">สรุปการคำนวณเงินปันผล</div>
+        <table class="print-summary-table">
+          <tbody>
+            <tr>
+              <td>ปันผลจากหุ้นยกมา</td>
+              <td id="printDividendCarry">0.00</td>
+            </tr>
+            <tr>
+              <td>ปันผลจากหุ้นรายเดือน</td>
+              <td id="printDividendMonthly">0.00</td>
+            </tr>
+            <tr class="highlight">
+              <td>เงินปันผลรวม</td>
+              <td id="printDividendTotal">0.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="print-section-title">รายละเอียดหุ้นรายเดือน</div>
+        <table class="print-month-table">
+          <thead>
+            <tr>
+              <th>เดือน</th>
+              <th>ช่วงวันที่</th>
+              <th>สูตรคำนวณ</th>
+              <th>ปันผล</th>
+            </tr>
+          </thead>
+          <tbody id="printMonthTableBody">
+            <!-- Generated by JS -->
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="3" style="text-align: right;">รวมปันผลสะสมรายเดือน:</td>
+              <td id="printDividendMonthlyTotal">0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div id="printRebateSection">
+        <div class="print-section-title">สรุปการคำนวณเงินเฉลี่ยคืน</div>
+        <table class="print-summary-table">
+          <tbody>
+            <tr>
+              <td>ดอกเบี้ยเงินกู้สะสมรวมทั้งปี</td>
+              <td id="printLoanInterest">0.00</td>
+            </tr>
+            <tr>
+              <td>อัตราเฉลี่ยคืน</td>
+              <td id="printRebateRateDisplay">0.00%</td>
+            </tr>
+            <tr class="highlight">
+              <td>เงินเฉลี่ยคืนรวม</td>
+              <td id="printRebateTotal">0.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="print-grand-total">
+        <h3>รวมเงินปันผลและเงินเฉลี่ยคืนทั้งสิ้น</h3>
+        <p id="printGrandTotal">0.00</p>
+      </div>
+
+      <div class="print-signature">
+        <div>
+          <div class="print-signature-line"></div>
+          <div>ผู้คำนวณ</div>
+        </div>
+        <div>
+          <div class="print-signature-line"></div>
+          <div>ผู้ตรวจสอบ</div>
+        </div>
+      </div>
+
+      <div class="print-footer">
+        ** ผลการคำนวณนี้เป็นข้อมูลเพื่อตรวจสอบเบื้องต้นเท่านั้น **<br>
+        สหกรณ์ออมทรัพย์ครูชุมพร จำกัด
+      </div>
+    </div>
+
+    <div class="footer">
+      ** ผลการคำนวณนี้เป็นข้อมูลเพื่อตรวจสอบเบื้องต้นเท่านั้น **<br>
+      <a href="#">สหกรณ์ออมทรัพย์ครูชุมพร จำกัด</a>
+    </div>
+  </div>
+
+  <script>
+    const rateData = {
+      2569: { dividend: 5.40, rebate: 9.50 },
+      2568: { dividend: 5.20, rebate: 8.80 },
+      2567: { dividend: 4.70, rebate: 5.10 },
+      2566: { dividend: 4.70, rebate: 8.10 },
+    };
+
+    const monthData = [
+      { name: "พฤศจิกายน", range: "1 พ.ย. - 7 ธ.ค.", factor: 11 },
+      { name: "ธันวาคม", range: "8 ธ.ค. - 7 ม.ค.", factor: 10 },
+      { name: "มกราคม", range: "8 ม.ค. - 7 ก.พ.", factor: 9 },
+      { name: "กุมภาพันธ์", range: "8 ก.พ. - 7 มี.ค.", factor: 8 },
+      { name: "มีนาคม", range: "8 มี.ค. - 7 เม.ย.", factor: 7 },
+      { name: "เมษายน", range: "8 เม.ย. - 7 พ.ค.", factor: 6 },
+      { name: "พฤษภาคม", range: "8 พ.ค. - 7 มิ.ย.", factor: 5 },
+      { name: "มิถุนายน", range: "8 มิ.ย. - 7 ก.ค.", factor: 4 },
+      { name: "กรกฎาคม", range: "8 ก.ค. - 7 ส.ค.", factor: 3 },
+      { name: "สิงหาคม", range: "8 ส.ค. - 7 ก.ย.", factor: 2 },
+      { name: "กันยายน", range: "8 ก.ย. - 7 ต.ค.", factor: 1 },
+      { name: "ตุลาคม", range: "8 ต.ค. - 31 ต.ค.", factor: 0 },
+    ];
+
+    let hasCalculated = false;
+
+    function formatMoney(num) {
+      return Number(num).toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatDateThai(date) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString('th-TH', options);
+    }
+
+    function init() {
+      const yearSelect = document.getElementById("yearSelect");
+      Object.keys(rateData).sort((a, b) => b - a).forEach(year => {
+        const opt = document.createElement("option");
+        opt.value = year;
+        opt.textContent = `ปีบัญชี พ.ศ. ${year}`;
+        yearSelect.appendChild(opt);
+      });
+      renderMonthInputs();
+      renderPrintMonthTable();
+      onYearChange();
+    }
+
+    function renderMonthInputs() {
+      const container = document.getElementById("monthInputs");
+      container.innerHTML = "";
+
+      monthData.forEach((m, index) => {
+        const div = document.createElement("div");
+        div.className = "month-input form-group";
+        div.innerHTML = `
+          <label for="share-month-${index}" title="${m.name} ${m.range} (คูณ ${m.factor} หาร 12)">
+            <span style="flex-shrink: 0;">${m.name}</span>
+            <span class="range">${m.range}</span>
+            <span class="factor">× ${m.factor} / 12</span>
+          </label>
+          <input type="number" id="share-month-${index}" placeholder="0">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderPrintMonthTable() {
+      const tbody = document.getElementById("printMonthTableBody");
+      tbody.innerHTML = "";
+
+      monthData.forEach((m, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.name}</td>
+          <td>${m.range}</td>
+          <td>(คูณ ${m.factor} หาร 12)</td>
+          <td id="print-month-dividend-${index}">0.00</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function onYearChange() {
+      const year = parseInt(document.getElementById("yearSelect").value);
+      const prevYear = year - 1;
+      const data = rateData[year];
+
+      document.getElementById("dividendRate").value = data.dividend.toFixed(2);
+      document.getElementById("rebateRate").value = data.rebate.toFixed(2);
+
+      document.getElementById("carryYearLabel").textContent = `(สิ้นสุด 31 ตุลาคม ${prevYear})`;
+      document.getElementById("interestYearLabel").textContent = `(สิ้นสุด 31 ตุลาคม ${prevYear})`;
+      document.getElementById("monthRangeLabel").textContent = `(พ.ย. ${prevYear} - ต.ค. ${year})`;
+
+      renderMonthTable(prevYear, year);
+
+      if (hasCalculated) {
+        calculate();
+      }
+    }
+
+    function renderMonthTable(prevYear, year) {
+      const tbody = document.getElementById("monthTableBody");
+      tbody.innerHTML = "";
+
+      monthData.forEach((m, index) => {
+        const displayYear = index < 2 ? prevYear : year;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.name} ${displayYear}</td>
+          <td>(คูณ ${m.factor} หาร 12)</td>
+          <td id="month-dividend-${index}">0.00</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function calculate() {
+      hasCalculated = true;
+
+      const year = parseInt(document.getElementById("yearSelect").value);
+      const prevYear = year - 1;
+      const dividendRate = parseFloat(document.getElementById("dividendRate").value) || 0;
+      const rebateRate = parseFloat(document.getElementById("rebateRate").value) || 0;
+
+      const shareCarryForward = parseFloat(document.getElementById("shareCarryForward").value) || 0;
+      const loanInterest = parseFloat(document.getElementById("loanInterest").value) || 0;
+
+      let hasShareData = shareCarryForward > 0;
+      let shareAddedThisYear = 0;
+      const monthlyShares = [];
+
+      monthData.forEach((m, index) => {
+        const amount = parseFloat(document.getElementById(`share-month-${index}`).value) || 0;
+        monthlyShares.push(amount);
+        shareAddedThisYear += amount;
+        if (amount > 0) hasShareData = true;
+      });
+
+      const shareCarryForwardNext = shareCarryForward + shareAddedThisYear;
+      const hasRebateData = loanInterest > 0;
+
+      const resultCard = document.getElementById("resultCard");
+      resultCard.classList.add("visible");
+
+      document.getElementById("dividendSection").style.display = hasShareData ? "block" : "none";
+      document.getElementById("rebateSection").style.display = hasRebateData ? "block" : "none";
+      document.getElementById("grandTotalSection").style.display = (hasShareData || hasRebateData) ? "block" : "none";
+
+      document.getElementById("printDividendSection").style.display = hasShareData ? "block" : "none";
+      document.getElementById("printRebateSection").style.display = hasRebateData ? "block" : "none";
+
+      let dividendTotal = 0;
+      let dividendCarry = 0;
+      let dividendMonthlyTotal = 0;
+
+      if (hasShareData) {
+        dividendCarry = shareCarryForward * (dividendRate / 100);
+
+        monthData.forEach((m, index) => {
+          const amount = monthlyShares[index];
+          const monthDividend = amount * (m.factor / 12) * (dividendRate / 100);
+          dividendMonthlyTotal += monthDividend;
+
+          document.getElementById(`month-dividend-${index}`).textContent = formatMoney(monthDividend);
+          document.getElementById(`print-month-dividend-${index}`).textContent = formatMoney(monthDividend);
+        });
+
+        dividendTotal = dividendCarry + dividendMonthlyTotal;
+
+        document.getElementById("shareCarryForwardDisplay").textContent = formatMoney(shareCarryForward);
+        document.getElementById("shareAddedThisYear").textContent = formatMoney(shareAddedThisYear);
+        document.getElementById("shareCarryForwardNext").textContent = formatMoney(shareCarryForwardNext);
+
+        document.getElementById("dividendCarryResult").textContent = formatMoney(dividendCarry);
+        document.getElementById("dividendMonthlyTotal").textContent = formatMoney(dividendMonthlyTotal);
+        document.getElementById("dividendTotal").textContent = formatMoney(dividendTotal);
+
+        document.getElementById("printShareCarryForward").textContent = formatMoney(shareCarryForward);
+        document.getElementById("printShareAddedThisYear").textContent = formatMoney(shareAddedThisYear);
+        document.getElementById("printShareCarryForwardNext").textContent = formatMoney(shareCarryForwardNext);
+        document.getElementById("printDividendCarry").textContent = formatMoney(dividendCarry);
+        document.getElementById("printDividendMonthly").textContent = formatMoney(dividendMonthlyTotal);
+        document.getElementById("printDividendTotal").textContent = formatMoney(dividendTotal);
+        document.getElementById("printDividendMonthlyTotal").textContent = formatMoney(dividendMonthlyTotal);
+      }
+
+      let rebateTotal = 0;
+
+      if (hasRebateData) {
+        rebateTotal = loanInterest * (rebateRate / 100);
+
+        document.getElementById("loanInterestDisplay").textContent = formatMoney(loanInterest);
+        document.getElementById("rebateRateDisplay").textContent = `${rebateRate.toFixed(2)}%`;
+        document.getElementById("rebateTotalDisplay").textContent = formatMoney(rebateTotal);
+
+        document.getElementById("rebateResultBox").classList.add("visible");
+        document.getElementById("rebateResultLoanInterest").textContent = formatMoney(loanInterest);
+        document.getElementById("rebateResultRate").textContent = `${rebateRate.toFixed(2)}%`;
+        document.getElementById("rebateResultTotal").textContent = formatMoney(rebateTotal);
+
+        document.getElementById("printLoanInterest").textContent = formatMoney(loanInterest);
+        document.getElementById("printRebateRateDisplay").textContent = `${rebateRate.toFixed(2)}%`;
+        document.getElementById("printRebateTotal").textContent = formatMoney(rebateTotal);
+      } else {
+        document.getElementById("rebateResultBox").classList.remove("visible");
+      }
+
+      const grandTotal = dividendTotal + rebateTotal;
+
+      document.getElementById("grandTotal").textContent = formatMoney(grandTotal);
+      document.getElementById("printGrandTotal").textContent = formatMoney(grandTotal);
+
+      document.getElementById("printYear").textContent = `พ.ศ. ${year}`;
+      document.getElementById("printReportTitle").textContent = `ปีบัญชี พ.ศ. ${year}`;
+      document.getElementById("printDividendRate").textContent = `${dividendRate.toFixed(2)}%`;
+      document.getElementById("printRebateRate").textContent = `${rebateRate.toFixed(2)}%`;
+      document.getElementById("printDate").textContent = formatDateThai(new Date());
+    }
+
+    function printReport() {
+      if (!hasCalculated) {
+        alert("กรุณากดปุ่มคำนวณก่อนพิมพ์รายงาน");
+        return;
+      }
+      window.print();
+    }
+        function resetForm(type) {
+      if (type === 'dividend') {
+        document.getElementById('shareCarryForward').value = '';
+        monthData.forEach((m, index) => {
+          document.getElementById(`share-month-${index}`).value = '';
+        });
+      } else if (type === 'rebate') {
+        document.getElementById('loanInterest').value = '';
+      }
+
+      // ตรวจสอบว่าถ้าไม่มีข้อมูลฝั่งไหนถูกกรอกเลย ให้ซ่อนผลลัพธ์ทั้งหมด
+      const shareCarry = parseFloat(document.getElementById('shareCarryForward').value) || 0;
+      const loanInt = parseFloat(document.getElementById('loanInterest').value) || 0;
+      let hasAnyShare = shareCarry > 0;
+      monthData.forEach((m, index) => {
+        if (parseFloat(document.getElementById(`share-month-${index}`).value) || 0 > 0) hasAnyShare = true;
+      });
+
+      if (!hasAnyShare && !hasAnyShare) {
+        hasCalculated = false;
+        document.getElementById("resultCard").classList.remove("visible");
+      } else {
+        calculate();
+      }
+
+      if (loanInt <= 0) {
+        document.getElementById("rebateResultBox").classList.remove("visible");
+      }
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
